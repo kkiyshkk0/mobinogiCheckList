@@ -2,11 +2,19 @@ const CACHE_NAME = 'mobinogi-checklist-cache-v1';
 const urlsToCache = [
   '/',
   '/index.html',
-  '/style.css',
-  '/main.js',
   '/checklist.json',
+  '/main.js',
+  '/style.css',
+  '/icons/arrow-up.svg',
+  '/icons/arrow-down.svg',
+  '/icons/arrow-left.svg',
+  '/icons/arrow-right.svg',
+  '/icons/favicon.ico',
   '/icons/icon-192.png',
-  '/icons/icon-512.png'
+  '/icons/icon-512.png',
+  '/manifest.json',
+  '/service-worker.js',
+  '/script.js'
 ];
 
 self.addEventListener('install', event => {
