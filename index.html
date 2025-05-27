@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <title>마비노기 모바일 체크리스트</title>
+  <style>
+    body { font-family: sans-serif; padding: 20px; }
+    h2 { margin-top: 40px; }
+    li { cursor: pointer; margin: 5px 0; }
+    .checked { text-decoration: line-through; color: gray; }
+  </style>
+</head>
+<body>
+  <h1>마비노기 모바일 체크리스트</h1>
+
+  <h2>일일 체크리스트</h2>
+  <ul id="daily-list">
+    <li>일일 던전 클리어</li>
+    <li>생활 스킬 수련</li>
+    <li>NPC 호감도 챙기기</li>
+  </ul>
+
+  <h2>주간 체크리스트</h2>
+  <ul id="weekly-list">
+    <li>세공석 파밍</li>
+    <li>그랜드마스터 미션</li>
+    <li>재능 퀘스트 완료</li>
+  </ul>
+
+  <script>
+    const now = new Date();
+    const today = now.toISOString().slice(0, 10);
+    const weekKey = getWeekKey(now);
+
+    function getWeekKey(date) {
+      const d = new Date(date);
+      const monday = new Date(d.setDate(d.getDate() - d.getDay() + 1));
+      return monday.toISOString().slice(0, 10);
+    }
+
+    function toggleItem(el, key) {
+      el.classList.toggle("checked");
+      saveStatus(key);
+    }
+
+    function saveStatus(key) {
+      const items = document.querySelectorAll(`#${key}-list li`);
+      const checked = [];
+      items.forEach((item, i) => {
+        if (item.classList.contains("checked")) checked.push(i);
+      });
+      localStorage.setItem(`${key}-checked`, JSON.stringify(checked));
+      localStorage.setItem(`${key}-date`, key === "daily" ? today : weekKey);
+    }
+
+    function loadStatus(key, expectedDate) {
+      const savedDate = localStorage.getItem(`${key}-date`);
+      const checked = savedDate === expectedDate
+        ? JSON.parse(localStorage.getItem(`${key}-checked`) || "[]")
+        : [];
+
+      const items = document.querySelectorAll(`#${key}-list li`);
+      items.forEach((item, i) => {
+        item.classList.toggle("checked", checked.includes(i));
+        item.onclick = () => toggleItem(item, key);
+      });
+    }
+
+    loadStatus("daily", today);
+    loadStatus("weekly", weekKey);
+  </script>
+</body>
+</html>
