@@ -2,16 +2,65 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8" />
-  <title>마비노기 모바일 체크리스트</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>마비노기 체크리스트</title>
   <style>
-    body { font-family: sans-serif; padding: 20px; }
-    h2 { margin-top: 40px; }
-    li { cursor: pointer; margin: 5px 0; }
-    .checked { text-decoration: line-through; color: gray; }
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      padding: 1rem;
+      background-color: #f7f7f7;
+      color: #333;
+    }
+    h1 {
+      font-size: 1.8rem;
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    h2 {
+      font-size: 1.3rem;
+      margin-top: 2rem;
+      margin-bottom: 1rem;
+      border-bottom: 2px solid #ccc;
+      padding-bottom: 0.3rem;
+    }
+    ul {
+      list-style: none;
+      padding: 0;
+    }
+    li {
+      background: #fff;
+      padding: 0.8rem 1rem;
+      margin-bottom: 0.5rem;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+      transition: background 0.2s;
+      font-size: 1rem;
+      line-height: 1.4;
+      user-select: none;
+    }
+    li:active {
+      background: #eee;
+    }
+    .checked {
+      text-decoration: line-through;
+      color: #999;
+    }
+
+    @media (min-width: 768px) {
+      body {
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 2rem;
+      }
+    }
   </style>
 </head>
 <body>
-  <h1>마비노기 모바일 체크리스트</h1>
+  <h1>마비노기 체크리스트</h1>
 
   <h2>일일 체크리스트</h2>
   <ul id="daily-list">
