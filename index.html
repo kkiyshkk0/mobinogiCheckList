@@ -2,32 +2,16 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>마비노기 체크리스트</title>
-  
-  <link rel="stylesheet" href="styles.css" />
-  <link rel="manifest" href="manifest.json" />
-  <meta name="theme-color" content="#3498db" />
-  
-  <script>
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./service-worker.js')
-          .then(reg => console.log('ServiceWorker 등록 성공', reg))
-          .catch(err => console.log('ServiceWorker 등록 실패', err));
-      });
-    }
-  </script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>모비노기 체크리스트</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <h1>마비노기 체크리스트</h1>
+  <div class="container">
+    <h1>모비노기 체크리스트 ✅</h1>
+    <div id="checklist"></div>
+  </div>
 
-  <h2>일일 체크리스트</h2>
-  <ul id="daily-list"></ul>
-
-  <h2>주간 체크리스트</h2>
-  <ul id="weekly-list"></ul>
-
-  <script src="script.js"></script>
+  <script src="main.js"></script>
 </body>
 </html>
