@@ -1,14 +1,27 @@
 [
   {
-    "title": "일일 던전 클리어",
+    "category": "일일 체크리스트",
     "items": [
-      { "label": "던전1", "checked": false },
-      { "label": "던전2", "checked": false },
-      { "label": "던전3", "checked": false }
+      {
+        "label": "캐시샵샵",
+        "subItems": ["무료", "보석"]
+      },
+      { "label": "생활 / 제작" },
+      { "label": "일일 교환 & 구매" },
+      { "label": "요일 던전 & 아르바이트" },
+      {
+        "label": "일일 던전 클리어",
+        "subItems": ["던전1", "던전2", "던전3"]
+      },
+      { "label": "경매장 확인" },
+      { "label": "일일 퀘스트 완료" }
     ]
   },
   {
-    "title": "일일 미션 완료",
-    "items": []
+    "category": "주간 체크리스트",
+    "items": [
+      { "label": "주간 보스 레이드" },
+      { "label": "주간 임무 클리어" }
+    ]
   }
 ]
