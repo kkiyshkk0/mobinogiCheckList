@@ -5,13 +5,19 @@
 ```
 mobinogiCheckList/
 ├── index.html
-├── checklist.json         (체크리스트 데이터 JSON)
-├── manifest.json
-├── service-worker.js
-├── styles.css            (스타일 분리)
-├── script.js             (JS 분리)
+├── checklist.json
+├── main.js
+├── styles.css
 ├── icons/
+│   ├── arrow-up.svg
+│   ├── arrow-down.svg
+│   ├── arrow-left.svg
+│   ├── arrow-right.svg
+│   ├── favicon.ico
 │   ├── icon-192.png
 │   └── icon-512.png
+├── manifest.json
+├── service-worker.js
+├── script.js
 └── README.md
 ```
