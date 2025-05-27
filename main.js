@@ -1,6 +1,65 @@
+function getCurrentMinuteString() {
+  const now = new Date();
+  const pad = (n) => (n < 10 ? '0' + n : n);
+  return `${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())}-${pad(now.getHours())}-${pad(now.getMinutes())}`;
+}
+
+function getCurrentDateString() {
+  const now = new Date();
+  return now.toISOString().slice(0, 10); // YYYY-MM-DD
+}
+
+function getCurrentWeekString() {
+  const now = new Date();
+  const firstDayOfYear = new Date(now.getFullYear(), 0, 1);
+  const pastDaysOfYear = (now - firstDayOfYear) / 86400000;
+  const weekNumber = Math.ceil((pastDaysOfYear + firstDayOfYear.getDay() + 1) / 7);
+  return `${now.getFullYear()}-W${weekNumber}`;
+}
+
+function clearChecklistByCategory(data, categoryName) {
+  data.forEach(superCat => {
+    superCat.categories.forEach(category => {
+      if (category.category === categoryName) {
+        category.items.forEach(item => {
+          const baseKey = `checklist:${superCat.superCategory}:${category.category}:${item.label}`;
+          localStorage.setItem(baseKey, 'false');
+          if (item.subItems) {
+            item.subItems.forEach(sub => {
+              localStorage.setItem(`${baseKey}:${sub}`, 'false');
+            });
+          }
+        });
+      }
+    });
+  });
+}
+
 fetch('checklist.json')
   .then(res => res.json())
   .then(data => {
+    // 초기화 체크
+    const nowMinute = getCurrentMinuteString();
+    const today = getCurrentDateString();
+    const thisWeek = getCurrentWeekString();
+
+    const savedDailyReset = localStorage.getItem('dailyResetTime');
+    // 1분 테스트
+    // if (savedDailyReset !== nowMinute) {
+    //   clearChecklistByCategory(data, '일일 체크리스트');
+    //   localStorage.setItem('dailyResetTime', nowMinute);
+    // }
+    if (savedDailyReset !== today) {
+      clearChecklistByCategory(data, '일일 체크리스트');
+      localStorage.setItem('dailyResetTime', today);
+    }
+
+    const savedWeeklyReset = localStorage.getItem('weeklyResetTime');
+    if (savedWeeklyReset !== thisWeek && (new Date()).getDay() === 1) { // 월요일 체크
+      clearChecklistByCategory(data, '주간 체크리스트');
+      localStorage.setItem('weeklyResetTime', thisWeek);
+    }
+
     const container = document.getElementById('checklist');
 
     data.forEach((superCat, superIdx) => {
@@ -12,16 +71,13 @@ fetch('checklist.json')
       superHeader.style.cursor = 'pointer';
       superHeader.style.userSelect = 'none';
 
-      // 카테고리 전체 컨테이너 (하위 카테고리 전부 감쌈)
       const categoriesContainer = document.createElement('div');
       categoriesContainer.className = 'categories-container';
 
-      // 첫 최상위 항목만 기본 펼침, 나머지는 접힘
       if (superIdx !== 0) {
         categoriesContainer.style.display = 'none';
       }
 
-      // 최상위 항목 제목 클릭 시 접기/펼치기
       superHeader.addEventListener('click', () => {
         const isHidden = categoriesContainer.style.display === 'none';
         categoriesContainer.style.display = isHidden ? 'block' : 'none';
@@ -29,7 +85,6 @@ fetch('checklist.json')
 
       superCatDiv.appendChild(superHeader);
 
-      // 하위 카테고리 렌더링
       superCat.categories.forEach(category => {
         const categoryDiv = document.createElement('div');
         categoryDiv.className = 'category';
@@ -37,8 +92,6 @@ fetch('checklist.json')
         const header = document.createElement('h2');
         header.textContent = category.category;
         header.style.userSelect = 'none';
-
-        // 기본적으로 하위 카테고리는 모두 펼쳐진 상태로 유지 (접기/펼치기 기능 없음)
         categoryDiv.appendChild(header);
 
         const itemsContainer = document.createElement('div');
@@ -61,9 +114,19 @@ fetch('checklist.json')
 
           const checkbox = document.createElement('input');
           checkbox.type = 'checkbox';
+
+          // 고유 키 생성
+          const itemKey = `checklist:${superCat.superCategory}:${category.category}:${item.label}`;
+
+          // 상태 복원
+          const saved = localStorage.getItem(itemKey);
+          if (saved === 'true') {
+            checkbox.checked = true;
+            itemDiv.classList.add('checked');
+          }
+
           label.appendChild(checkbox);
           label.append(item.label);
-
           topRow.appendChild(label);
 
           if (item.subItems) {
@@ -102,11 +165,23 @@ fetch('checklist.json')
               const subCheckbox = document.createElement('input');
               subCheckbox.type = 'checkbox';
 
+              const subKey = `${itemKey}:${sub}`;
+
+              // 상태 복원
+              const subSaved = localStorage.getItem(subKey);
+              if (subSaved === 'true') {
+                subCheckbox.checked = true;
+                subDiv.classList.add('checked');
+              }
+
               subLabel.appendChild(subCheckbox);
               subLabel.append(sub);
               subDiv.appendChild(subLabel);
 
               subCheckbox.addEventListener('change', () => {
+                // 상태 저장
+                localStorage.setItem(subKey, subCheckbox.checked);
+
                 if (subCheckbox.checked) {
                   subDiv.classList.add('checked');
                 } else {
@@ -117,18 +192,22 @@ fetch('checklist.json')
                 const allChecked = Array.from(subCheckboxes).every(cb => cb.checked);
                 checkbox.checked = allChecked;
                 itemDiv.classList.toggle('checked', allChecked);
+
+                localStorage.setItem(itemKey, allChecked);
               });
 
               subList.appendChild(subDiv);
             });
 
             checkbox.addEventListener('change', () => {
+              localStorage.setItem(itemKey, checkbox.checked);
               itemDiv.classList.toggle('checked', checkbox.checked);
 
               const subCheckboxes = subList.querySelectorAll('input[type="checkbox"]');
               const subItems = subList.querySelectorAll('.sub-item');
               subCheckboxes.forEach((subCheckbox, idx) => {
                 subCheckbox.checked = checkbox.checked;
+                localStorage.setItem(`${itemKey}:${item.subItems[idx]}`, checkbox.checked);
                 if (checkbox.checked) {
                   subItems[idx].classList.add('checked');
                 } else {
@@ -151,6 +230,7 @@ fetch('checklist.json')
           } else {
             checkbox.addEventListener('change', () => {
               itemDiv.classList.toggle('checked', checkbox.checked);
+              localStorage.setItem(itemKey, checkbox.checked);
             });
           }
 
