@@ -1,125 +1,23 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <link rel="manifest" href="manifest.json" />
-  <meta name="theme-color" content="#3498db" />
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>마비노기 체크리스트</title>
+  
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#3498db" />
+  
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
         navigator.serviceWorker.register('./service-worker.js')
-        .then(reg => console.log('ServiceWorker 등록 성공', reg))
-        .catch(err => console.log('ServiceWorker 등록 실패', err));
+          .then(reg => console.log('ServiceWorker 등록 성공', reg))
+          .catch(err => console.log('ServiceWorker 등록 실패', err));
       });
     }
   </script>
-  <title>마비노기 체크리스트</title>
-  <style>
-    /* 기본 스타일 */
-    body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      margin: 0;
-      padding: 1rem;
-      background: #f0f2f5;
-      color: #333;
-      max-width: 600px;
-      margin-left: auto;
-      margin-right: auto;
-    }
-
-    h1 {
-      text-align: center;
-      font-size: 2rem;
-      margin-bottom: 1.5rem;
-      color: #2c3e50;
-    }
-
-    h2 {
-      margin-top: 2rem;
-      margin-bottom: 1rem;
-      border-bottom: 2px solid #3498db;
-      padding-bottom: 0.3rem;
-      color: #2980b9;
-    }
-
-    ul {
-      list-style: none;
-      padding-left: 0;
-      margin: 0;
-    }
-
-    li {
-      background: white;
-      margin-bottom: 0.6rem;
-      border-radius: 8px;
-      padding: 0.75rem 1rem;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-      cursor: pointer;
-      position: relative;
-      user-select: none;
-      transition: background-color 0.2s;
-      display: flex;
-      align-items: center;
-      font-size: 1.1rem;
-      line-height: 1.4;
-    }
-    li:hover {
-      background-color: #e8f0fe;
-    }
-
-    li.checked {
-      color: #999;
-      text-decoration: line-through;
-      background-color: #f7f7f7;
-    }
-
-    /* 하위 리스트 들여쓰기 */
-    li ul {
-      margin-top: 0.5rem;
-      margin-left: 1.5rem;
-    }
-
-    /* 하위 리스트 아이템 스타일 */
-    li ul li {
-      font-weight: normal;
-      font-size: 1rem;
-      box-shadow: none;
-      background: #fafafa;
-      padding-left: 1rem;
-    }
-    li ul li:hover {
-      background-color: #dceefd;
-    }
-    li ul li.checked {
-      background: #f0f0f0;
-    }
-
-    /* 접기/펼치기 토글 아이콘 */
-    .toggle-btn {
-      width: 20px;
-      height: 20px;
-      margin-right: 10px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: bold;
-      user-select: none;
-      color: #3498db;
-      cursor: pointer;
-      flex-shrink: 0;
-      transition: transform 0.2s ease;
-    }
-
-    .toggle-btn.collapsed {
-      transform: rotate(0deg);
-    }
-
-    .toggle-btn.expanded {
-      transform: rotate(90deg);
-    }
-
-  </style>
 </head>
 <body>
   <h1>마비노기 체크리스트</h1>
@@ -130,134 +28,6 @@
   <h2>주간 체크리스트</h2>
   <ul id="weekly-list"></ul>
 
-  <script>
-    const now = new Date();
-    const today = now.toISOString().slice(0, 10);
-    const weekKey = getWeekKey(now);
-
-    fetch("checklist.json")
-      .then(res => res.json())
-      .then(data => {
-        renderList("daily", data.daily);
-        renderList("weekly", data.weekly);
-        loadStatus("daily", today);
-        loadStatus("weekly", weekKey);
-      });
-
-    function renderList(key, items, path = "") {
-      const ul = document.getElementById(`${key}-list`);
-      if (!path) ul.innerHTML = "";
-
-      items.forEach((item, i) => {
-        const li = document.createElement("li");
-        let itemPath = path ? `${path}-${i}` : `${key}-${i}`;
-
-        if (typeof item === "string") {
-          li.textContent = item;
-          li.dataset.path = itemPath;
-          li.onclick = (e) => {
-            e.stopPropagation();
-            toggleItem(li, key);
-          };
-        } else if (typeof item === "object" && item.title && Array.isArray(item.sub)) {
-          // 토글 버튼
-          const toggleBtn = document.createElement("div");
-          toggleBtn.className = "toggle-btn collapsed";
-          toggleBtn.textContent = "▶";
-          toggleBtn.onclick = (e) => {
-            e.stopPropagation();
-            if (toggleBtn.classList.contains("collapsed")) {
-              toggleBtn.classList.remove("collapsed");
-              toggleBtn.classList.add("expanded");
-              toggleBtn.textContent = "▼";
-              subUl.style.display = "block";
-            } else {
-              toggleBtn.classList.remove("expanded");
-              toggleBtn.classList.add("collapsed");
-              toggleBtn.textContent = "▶";
-              subUl.style.display = "none";
-            }
-          };
-          li.appendChild(toggleBtn);
-
-          const spanTitle = document.createElement("span");
-          spanTitle.textContent = item.title;
-          spanTitle.style.fontWeight = "bold";
-          spanTitle.style.flexGrow = "1";
-          li.appendChild(spanTitle);
-
-          li.dataset.path = itemPath;
-          li.onclick = (e) => {
-            e.stopPropagation();
-            toggleItem(li, key);
-          };
-
-          const subUl = document.createElement("ul");
-          subUl.style.paddingLeft = "0";
-          subUl.style.marginTop = "0.5rem";
-          subUl.style.display = "none";  // 기본 접힌 상태
-          li.appendChild(subUl);
-
-          renderSubList(key, item.sub, subUl, itemPath + "-sub");
-        }
-        if (!path) ul.appendChild(li);
-      });
-    }
-
-    function renderSubList(key, items, ul, path) {
-      items.forEach((item, i) => {
-        const li = document.createElement("li");
-        const itemPath = `${path}-${i}`;
-        li.textContent = item;
-        li.dataset.path = itemPath;
-        li.style.fontWeight = "normal";
-        li.onclick = (e) => {
-          e.stopPropagation();
-          toggleItem(li, key);
-        };
-        ul.appendChild(li);
-      });
-    }
-
-    function toggleItem(el, key) {
-      el.classList.toggle("checked");
-      saveStatus(key);
-    }
-
-    function saveStatus(key) {
-      const items = document.querySelectorAll(`#${key}-list li`);
-      const checkedPaths = [];
-      items.forEach(item => {
-        if (item.classList.contains("checked")) {
-          checkedPaths.push(item.dataset.path);
-        }
-      });
-      localStorage.setItem(`${key}-checked`, JSON.stringify(checkedPaths));
-      localStorage.setItem(`${key}-date`, key === "daily" ? today : weekKey);
-    }
-
-    function loadStatus(key, expectedDate) {
-      const savedDate = localStorage.getItem(`${key}-date`);
-      const checkedPaths = savedDate === expectedDate
-        ? JSON.parse(localStorage.getItem(`${key}-checked`) || "[]")
-        : [];
-
-      const items = document.querySelectorAll(`#${key}-list li`);
-      items.forEach(item => {
-        const path = item.dataset.path;
-        item.classList.toggle("checked", checkedPaths.includes(path));
-        item.onclick = (e) => {
-          e.stopPropagation();
-          toggleItem(item, key);
-        };
-      });
-    }
-
-    function getWeekKey(date) {
-      const d = new Date(date);
-      const monday = new Date(d.setDate(d.getDate() - d.getDay() + 1));
-      return monday.toISOString().slice(0, 10);
-    }
-  </script>
+  <script src="script.js"></script>
 </body>
 </html>
