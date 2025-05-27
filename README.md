@@ -3,8 +3,8 @@
 
 ---
 
-프로젝트 구조
-'''
+## 프로젝트 구조
+```
 mobinogiCheckList/
 ├── index.html
 ├── checklist.json         (체크리스트 데이터 JSON)
@@ -16,4 +16,4 @@ mobinogiCheckList/
 │   ├── icon-192.png
 │   └── icon-512.png
 └── README.md
-'''
+```
