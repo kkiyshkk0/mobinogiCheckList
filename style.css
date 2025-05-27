@@ -1,0 +1,74 @@
+body {
+  font-family: 'Segoe UI', sans-serif;
+  margin: 0;
+  background: #f7f9fc;
+  color: #333;
+}
+.container {
+  max-width: 600px;
+  margin: auto;
+  padding: 1rem;
+}
+h1 {
+  text-align: center;
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+}
+.category {
+  margin-bottom: 1.5rem;
+  border-bottom: 1px solid #ccc;
+  padding-bottom: 1rem;
+}
+.category h2 {
+  font-size: 1.2rem;
+  margin-bottom: 0.5rem;
+}
+.item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5rem;
+  background: #fff;
+  border-radius: 0.5rem;
+  margin: 0.3rem 0;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+}
+.item label {
+  flex: 1;
+  min-height: 30px;
+  display: flex;
+  align-items: center;
+}
+.item input[type="checkbox"] {
+  margin-right: 1rem;
+}
+.item.checked label {
+  text-decoration: line-through;
+  color: gray;
+}
+.sub-items {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+.sub-item {
+  background: #eee;
+  border-radius: 0.5rem;
+  padding: 0.3rem 0.5rem;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+}
+.sub-item input[type="checkbox"] {
+  margin-right: 0.3rem;
+}
+.sub-item.checked label {
+  text-decoration: line-through;
+  color: gray;
+}
+.toggle-btn {
+  padding: 0;
+  margin-left: 8px;
+  vertical-align: middle;
+}

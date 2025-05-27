@@ -1,11 +1,10 @@
 {
-  "name": "마비노기 체크리스트",
-  "short_name": "mobinogiCheck",
+  "name": "Mobinogi 체크리스트",
+  "short_name": "MobinogiCheck",
   "start_url": ".",
   "display": "standalone",
-  "background_color": "#f0f2f5",
-  "theme_color": "#3498db",
-  "description": "마비노기 체크리스트 웹 앱",
+  "background_color": "#ffffff",
+  "theme_color": "#007bff",
   "icons": [
     {
       "src": "icons/icon-192.png",
