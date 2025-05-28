@@ -53,7 +53,7 @@ function resetDailyChecklist(data) {
     clearChecklistByCategory(data, "일일 체크리스트");
     localStorage.setItem("lastDailyReset", today);
   } else {
-    console.log("❌ 초기화 조건 불충족: 스킵됨");
+    console.log("❌ 초기화 조건 불충족: 일간 체크리스트 유지됨");
   }
 }
 
