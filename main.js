@@ -146,6 +146,29 @@ fetch('checklist.json')
 
           // 고유 키 생성
           const itemKey = `checklist:${superCat.superCategory}:${category.category}:${item.label}`;
+          const hideKey = `hide:${superCat.superCategory}:${category.category}:${item.label}`;
+
+          // 초기 숨김 처리
+          if (localStorage.getItem(hideKey) === 'true') {
+            itemDiv.style.display = 'none';
+          }
+
+          // 숨기기 버튼 생성
+          const hideBtn = document.createElement('button');
+          hideBtn.textContent = 'X';
+          hideBtn.style.marginLeft = '8px';
+          hideBtn.style.background = 'transparent';
+          hideBtn.style.border = 'none';
+          hideBtn.style.color = 'red';
+          hideBtn.style.cursor = 'pointer';
+          hideBtn.title = '숨기기';
+
+          hideBtn.addEventListener('click', () => {
+            itemDiv.style.display = 'none';
+            localStorage.setItem(hideKey, 'true');
+          });
+
+          topRow.appendChild(hideBtn);
 
           // 체크박스 상태 복원
           const saved = localStorage.getItem(itemKey);
@@ -196,7 +219,7 @@ fetch('checklist.json')
 
               const subKey = `${itemKey}:${sub}`;
 
-          // 체크박스 상태 복원
+              // 체크박스 상태 복원
               const subSaved = localStorage.getItem(subKey);
               if (subSaved === 'true') {
                 subCheckbox.checked = true;
