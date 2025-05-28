@@ -128,6 +128,9 @@ fetch('checklist.json')
           itemDiv.className = 'item';
           itemDiv.style.flexDirection = 'column';
 
+          // superIdx로 배경색 스타일 클래스 추가
+          itemDiv.classList.add(superIdx % 2 === 0 ? 'bg-light' : 'bg-dark');
+
           const topRow = document.createElement('div');
           topRow.style.display = 'flex';
           topRow.style.alignItems = 'center';

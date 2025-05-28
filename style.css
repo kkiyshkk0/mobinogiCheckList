@@ -41,6 +41,12 @@ h1 {
   cursor: default;
   user-select: none;
 }
+.item.bg-light {
+  background-color: #ffffff;
+}
+.item.bg-dark {
+  background-color: #E7F7EE;
+}
 .item {
   display: flex;
   flex-direction: column; /* 세로 방향 배치 */
