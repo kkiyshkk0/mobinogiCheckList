@@ -42,7 +42,7 @@ function resetDailyChecklist(data) {
   const lastReset = localStorage.getItem("lastDailyReset");
 
   const resetTime = new Date();
-  resetTime.setHours(9, 37, 0, 0); // 오전 9시 25분
+  resetTime.setHours(6, 0, 0, 0); // 오전 6시 0분
 
   console.log("현재 시간:", now.toLocaleString());
   console.log("초기화 시간:", resetTime.toLocaleString());
@@ -84,11 +84,9 @@ function resetWeeklyChecklist(data) {
   }
 }
 
-
 fetch('checklist.json')
   .then(res => res.json())
   .then(data => {
-
     resetDailyChecklist(data);
     resetWeeklyChecklist(data);
 
@@ -105,14 +103,10 @@ fetch('checklist.json')
 
       const categoriesContainer = document.createElement('div');
       categoriesContainer.className = 'categories-container';
-
-      if (superIdx !== 0) {
-        categoriesContainer.style.display = 'none';
-      }
+      categoriesContainer.style.display = superIdx === 0 ? 'block' : 'none';
 
       superHeader.addEventListener('click', () => {
-        const isHidden = categoriesContainer.style.display === 'none';
-        categoriesContainer.style.display = isHidden ? 'block' : 'none';
+        categoriesContainer.style.display = categoriesContainer.style.display === 'none' ? 'block' : 'none';
       });
 
       superCatDiv.appendChild(superHeader);
@@ -150,7 +144,7 @@ fetch('checklist.json')
           // 고유 키 생성
           const itemKey = `checklist:${superCat.superCategory}:${category.category}:${item.label}`;
 
-          // 상태 복원
+          // 체크박스 상태 복원
           const saved = localStorage.getItem(itemKey);
           if (saved === 'true') {
             checkbox.checked = true;
@@ -199,7 +193,7 @@ fetch('checklist.json')
 
               const subKey = `${itemKey}:${sub}`;
 
-              // 상태 복원
+          // 체크박스 상태 복원
               const subSaved = localStorage.getItem(subKey);
               if (subSaved === 'true') {
                 subCheckbox.checked = true;
@@ -214,17 +208,14 @@ fetch('checklist.json')
                 // 상태 저장
                 localStorage.setItem(subKey, subCheckbox.checked);
 
-                if (subCheckbox.checked) {
-                  subDiv.classList.add('checked');
-                } else {
-                  subDiv.classList.remove('checked');
-                }
+                if (subCheckbox.checked) subDiv.classList.add('checked');
+                else subDiv.classList.remove('checked');
 
+                // 모든 하위 체크박스가 체크되어 있으면 상위 체크박스 체크 및 저장
                 const subCheckboxes = itemDiv.querySelectorAll('.sub-item input[type="checkbox"]');
                 const allChecked = Array.from(subCheckboxes).every(cb => cb.checked);
                 checkbox.checked = allChecked;
                 itemDiv.classList.toggle('checked', allChecked);
-
                 localStorage.setItem(itemKey, allChecked);
               });
 
@@ -276,4 +267,7 @@ fetch('checklist.json')
       superCatDiv.appendChild(categoriesContainer);
       container.appendChild(superCatDiv);
     });
+  })
+  .catch(err => {
+    console.error("checklist.json 로딩 실패:", err);
   });
