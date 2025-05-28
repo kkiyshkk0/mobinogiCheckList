@@ -92,6 +92,29 @@ fetch('checklist.json')
 
     const container = document.getElementById('checklist');
 
+    const restoreButton = document.createElement('button');
+    restoreButton.textContent = '숨긴 항목 복원';
+    restoreButton.className = 'restore-button';  // 스타일 클래스만 지정
+
+    restoreButton.addEventListener('click', () => {
+      // localStorage에서 'hide:'로 시작하는 키들 삭제
+      const keysToRemove = [];
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key.startsWith('hide:')) {
+          keysToRemove.push(key);
+        }
+      }
+      keysToRemove.forEach(key => {
+        localStorage.removeItem(key);
+      });
+
+      // 모든 숨겨진 itemDiv 다시 표시
+      document.querySelectorAll('.item').forEach(item => {
+        item.style.display = 'flex';
+      });
+    });
+
     data.forEach((superCat, superIdx) => {
       const superCatDiv = document.createElement('div');
       superCatDiv.className = 'super-category';
@@ -293,6 +316,8 @@ fetch('checklist.json')
       superCatDiv.appendChild(categoriesContainer);
       container.appendChild(superCatDiv);
     });
+
+    container.appendChild(restoreButton);
   })
   .catch(err => {
     console.error("checklist.json 로딩 실패:", err);

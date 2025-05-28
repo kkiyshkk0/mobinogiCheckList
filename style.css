@@ -111,3 +111,19 @@ h1 {
   border: none;
   cursor: pointer;
 }
+.restore-button {
+  display: block;
+  margin: 1.5rem auto 0 auto; /* 위쪽 마진 주고 좌우 중앙 정렬 */
+  padding: 0.5rem 1rem;
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  cursor: pointer;
+  border-radius: 4px;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+  width: fit-content;
+}
+.restore-button:hover {
+  background-color: #45a049;
+}
