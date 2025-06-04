@@ -1,22 +1,3 @@
-function getCurrentMinuteString() {
-  const now = new Date();
-  const pad = (n) => (n < 10 ? '0' + n : n);
-  return `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}-${pad(now.getHours())}-${pad(now.getMinutes())}`;
-}
-
-function getCurrentDateString() {
-  const now = new Date();
-  return now.toISOString().slice(0, 10); // YYYY-MM-DD
-}
-
-function getCurrentWeekString() {
-  const now = new Date();
-  const firstDayOfYear = new Date(now.getFullYear(), 0, 1);
-  const pastDaysOfYear = (now - firstDayOfYear) / 86400000;
-  const weekNumber = Math.ceil((pastDaysOfYear + firstDayOfYear.getDay() + 1) / 7);
-  return `${now.getFullYear()}-W${weekNumber}`;
-}
-
 function clearChecklistByCategory(data, categoryName) {
   data.forEach(superCat => {
     superCat.categories.forEach(category => {
@@ -38,20 +19,21 @@ function clearChecklistByCategory(data, categoryName) {
 // ✅ 매일 오전 6시에 초기화
 function resetDailyChecklist(data) {
   const now = new Date();
-  const today = getCurrentDateString();
-  const lastReset = localStorage.getItem("lastDailyReset");
-
   const resetTime = new Date();
-  resetTime.setHours(6, 0, 0, 0); // 오전 6시 0분
+  resetTime.setHours(6, 0, 0, 0); // 오늘 오전 6시
+
+  const lastResetRaw = localStorage.getItem("lastDailyReset");
+  const lastReset = lastResetRaw ? new Date(lastResetRaw) : null;
 
   console.log("현재 시간:", now.toLocaleString());
-  console.log("초기화 시간:", resetTime.toLocaleString());
-  console.log("오늘:", today, "/ 마지막 초기화:", lastReset);
+  console.log("초기화 기준 시각:", resetTime.toLocaleString());
+  console.log("마지막 초기화 시각:", lastReset?.toLocaleString() || "없음");
 
-  if (now >= resetTime && lastReset !== today) {
+  // 마지막 초기화가 없거나 오늘 오전 6시 이후로 넘어간 후 처음 실행된 경우
+  if (!lastReset || (lastReset < resetTime && now >= resetTime)) {
     console.log("✅ 일일 체크리스트 초기화 실행");
     clearChecklistByCategory(data, "일일 체크리스트");
-    localStorage.setItem("lastDailyReset", today);
+    localStorage.setItem("lastDailyReset", now.toISOString());
   } else {
     console.log("❌ 초기화 조건 불충족: 일간 체크리스트 유지됨");
   }
@@ -60,25 +42,28 @@ function resetDailyChecklist(data) {
 // ✅ 매주 월요일 오전 6시에 초기화
 function resetWeeklyChecklist(data) {
   const now = new Date();
-  const weekString = getCurrentWeekString(); // e.g., "2025-W22"
-  const lastReset = localStorage.getItem("lastWeeklyReset");
 
-  // 이번 주 월요일 오전 6시로 초기화 기준 시간 설정
+  // 이번 주 월요일 오전 6시 시간 계산
   const resetTime = new Date();
-  const day = now.getDay(); // 0 (일) ~ 6 (토)
+  const day = now.getDay(); // 0: 일요일 ~ 6: 토요일
   const diffToMonday = (day + 6) % 7; // 현재 요일에서 월요일까지 지난 일수
-  resetTime.setDate(now.getDate() - diffToMonday); // 이번 주 월요일 날짜
-  resetTime.setHours(6, 0, 0, 0); // 오전 6시
+  resetTime.setDate(now.getDate() - diffToMonday); // 이번 주 월요일 날짜로 설정
+  resetTime.setHours(6, 0, 0, 0); // 월요일 오전 6시
 
-  // 디버깅 로그 출력
+  // 마지막 초기화 시각 불러오기
+  const lastResetRaw = localStorage.getItem("lastWeeklyReset");
+  const lastReset = lastResetRaw ? new Date(lastResetRaw) : null;
+
+  // 디버깅 로그
   console.log("현재 시간:", now.toLocaleString());
-  console.log("이번 주 기준 월요일 오전 6시:", resetTime.toLocaleString());
-  console.log("이번 주 식별자:", weekString, "/ 마지막 초기화:", lastReset);
+  console.log("이번 주 월요일 오전 6시:", resetTime.toLocaleString());
+  console.log("마지막 초기화 시각:", lastReset?.toLocaleString() || "없음");
 
-  if (now >= resetTime && lastReset !== weekString) {
+  // 초기화 조건: 이전 초기화가 없거나, 이번 주 월요일 6시 이후로 넘어간 후 처음 실행된 경우
+  if (!lastReset || (lastReset < resetTime && now >= resetTime)) {
     console.log("✅ 주간 체크리스트 초기화 실행");
     clearChecklistByCategory(data, "주간 체크리스트");
-    localStorage.setItem("lastWeeklyReset", weekString);
+    localStorage.setItem("lastWeeklyReset", now.toISOString());
   } else {
     console.log("❌ 초기화 조건 불충족: 주간 체크리스트 유지됨");
   }
@@ -92,6 +77,29 @@ fetch('checklist.json')
 
     const container = document.getElementById('checklist');
 
+    // ✅ "일일 초기화" 버튼
+    const dailyResetButton = document.createElement('button');
+    dailyResetButton.textContent = '일일 초기화';
+    dailyResetButton.className = 'restore-button';
+
+    dailyResetButton.addEventListener('click', () => {
+      console.log("✅ 일일 체크리스트 초기화 실행");
+      clearChecklistByCategory(data, "일일 체크리스트");
+      location.reload();  // 페이지 리로드
+    });
+    
+    // ✅ "주간 초기화" 버튼
+    const weeklyResetButton = document.createElement('button');
+    weeklyResetButton.textContent = '주간 초기화';
+    weeklyResetButton.className = 'restore-button';
+
+    weeklyResetButton.addEventListener('click', () => {
+      console.log("✅ 주간 체크리스트 초기화 실행");
+      clearChecklistByCategory(data, "주간 체크리스트");
+      location.reload();  // 페이지 리로드
+    });
+
+    // "숨긴 항목 복원" 버튼
     const restoreButton = document.createElement('button');
     restoreButton.textContent = '숨긴 항목 복원';
     restoreButton.className = 'restore-button';  // 스타일 클래스만 지정
@@ -317,6 +325,9 @@ fetch('checklist.json')
       container.appendChild(superCatDiv);
     });
 
+
+    container.appendChild(dailyResetButton);
+    container.appendChild(weeklyResetButton);
     container.appendChild(restoreButton);
   })
   .catch(err => {
