@@ -1,21 +1,27 @@
 // createChecklist.js
 
+// 체크리스트를 생성하는 함수
 export function createChecklist(container, data) {
   data.forEach((superCat, superIdx) => {
+    // 상위 카테고리(div) 생성
     const superCatDiv = document.createElement('div');
     superCatDiv.className = 'super-category';
 
+    // 상위 카테고리 제목(h1) 생성
     const superHeader = document.createElement('h1');
     superHeader.textContent = superCat.superCategory;
     superHeader.classList.add('super-header');
 
+    // 하위 카테고리를 담을 컨테이너
     const categoriesContainer = document.createElement('div');
     categoriesContainer.className = 'categories-container';
 
+    // 로컬스토리지에서 이 상위 카테고리의 접힘 상태를 확인
     const collapseKey = `collapseState:${superCat.superCategory}`;
     const isCollapsed = localStorage.getItem(collapseKey) === 'true';
     categoriesContainer.style.display = isCollapsed ? 'none' : 'block';
 
+    // 상위 카테고리 제목 클릭 시 접기/펼치기 기능
     superHeader.addEventListener('click', () => {
       const currentlyHidden = categoriesContainer.style.display === 'none';
       categoriesContainer.style.display = currentlyHidden ? 'block' : 'none';
@@ -24,6 +30,7 @@ export function createChecklist(container, data) {
 
     superCatDiv.appendChild(superHeader);
 
+    // 하위 카테고리 반복
     superCat.categories.forEach(category => {
       const categoryDiv = document.createElement('div');
       categoryDiv.className = 'category';
@@ -35,26 +42,28 @@ export function createChecklist(container, data) {
       const itemsContainer = document.createElement('div');
       itemsContainer.className = 'items-container';
 
+      // 항목 반복
       category.items.forEach(item => {
         const itemDiv = document.createElement('div');
         itemDiv.className = 'item';
-        itemDiv.classList.add(superIdx % 2 === 0 ? 'bg-light' : 'bg-dark');
+        itemDiv.classList.add(superIdx % 2 === 0 ? 'bg-light' : 'bg-dark'); // 배경색 교차
 
         const topRow = document.createElement('div');
         topRow.className = 'item-top-row';
 
         const label = document.createElement('label');
-
         const checkbox = document.createElement('input');
         checkbox.type = 'checkbox';
 
         const itemKey = `checklist:${superCat.superCategory}:${category.category}:${item.label}`;
         const hideKey = `hide:${superCat.superCategory}:${category.category}:${item.label}`;
 
+        // 숨김 처리된 항목은 보이지 않게 함
         if (localStorage.getItem(hideKey) === 'true') {
           itemDiv.style.display = 'none';
         }
 
+        // 항목 숨기기 버튼 (X)
         const hideBtn = document.createElement('button');
         hideBtn.textContent = 'X';
         hideBtn.className = 'hide-btn';
@@ -67,6 +76,7 @@ export function createChecklist(container, data) {
 
         topRow.appendChild(hideBtn);
 
+        // 기존 저장 상태 반영
         const saved = localStorage.getItem(itemKey);
         if (saved === 'true') {
           checkbox.checked = true;
@@ -77,6 +87,7 @@ export function createChecklist(container, data) {
         label.append(item.label);
         topRow.appendChild(label);
 
+        // 서브 항목이 존재하면 토글 버튼 추가
         if (item.subItems) {
           const toggleBtn = document.createElement('button');
           toggleBtn.className = 'toggle-btn';
@@ -91,6 +102,7 @@ export function createChecklist(container, data) {
 
         itemDiv.appendChild(topRow);
 
+        // 서브 항목 처리
         if (item.subItems) {
           const subList = document.createElement('div');
           subList.className = 'sub-items';
@@ -115,12 +127,14 @@ export function createChecklist(container, data) {
             subLabel.append(sub);
             subDiv.appendChild(subLabel);
 
+            // 서브 체크박스 클릭 시 상태 저장 및 스타일 갱신
             subCheckbox.addEventListener('change', () => {
               localStorage.setItem(subKey, subCheckbox.checked);
 
               if (subCheckbox.checked) subDiv.classList.add('checked');
               else subDiv.classList.remove('checked');
 
+              // 모든 서브 항목이 체크됐는지 확인 후 상위 체크박스 상태 반영
               const subCheckboxes = itemDiv.querySelectorAll('.sub-item input[type="checkbox"]');
               const allChecked = Array.from(subCheckboxes).every(cb => cb.checked);
               checkbox.checked = allChecked;
@@ -131,6 +145,7 @@ export function createChecklist(container, data) {
             subList.appendChild(subDiv);
           });
 
+          // 상위 항목 체크박스 클릭 시 모든 서브 항목 일괄 체크/해제
           checkbox.addEventListener('change', () => {
             localStorage.setItem(itemKey, checkbox.checked);
             itemDiv.classList.toggle('checked', checkbox.checked);
@@ -144,6 +159,7 @@ export function createChecklist(container, data) {
             });
           });
 
+          // 토글 버튼 클릭 시 서브 항목 표시/숨김
           const toggleBtn = topRow.querySelector('.toggle-btn');
           if (toggleBtn) {
             const icon = toggleBtn.querySelector('img');
@@ -156,6 +172,7 @@ export function createChecklist(container, data) {
 
           itemDiv.appendChild(subList);
         } else {
+          // 서브 항목이 없는 경우 체크박스 단독 처리
           checkbox.addEventListener('change', () => {
             itemDiv.classList.toggle('checked', checkbox.checked);
             localStorage.setItem(itemKey, checkbox.checked);
