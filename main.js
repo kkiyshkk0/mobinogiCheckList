@@ -13,6 +13,20 @@ function clearChecklistByCategory(data, categoryName) {
         });
       }
     });
+
+    const collapseKey = `collapseState:${superCat.superCategory}`;
+    const isCollapsed = localStorage.getItem(collapseKey) === 'true';
+
+    // 기존 표시 방식 수정
+    categoriesContainer.style.display = isCollapsed ? 'none' : 'block';
+
+    superHeader.addEventListener('click', () => {
+      const currentlyHidden = categoriesContainer.style.display === 'none';
+      categoriesContainer.style.display = currentlyHidden ? 'block' : 'none';
+
+      // 상태를 localStorage에 저장
+      localStorage.setItem(collapseKey, !currentlyHidden);
+    });
   });
 }
 
@@ -134,10 +148,14 @@ fetch('checklist.json')
 
       const categoriesContainer = document.createElement('div');
       categoriesContainer.className = 'categories-container';
-      categoriesContainer.style.display = superIdx === 0 ? 'block' : 'none';
+      const collapseKey = `collapseState:${superCat.superCategory}`;
+      const isCollapsed = localStorage.getItem(collapseKey) === 'true';
+      categoriesContainer.style.display = isCollapsed ? 'none' : 'block';
 
       superHeader.addEventListener('click', () => {
-        categoriesContainer.style.display = categoriesContainer.style.display === 'none' ? 'block' : 'none';
+        const currentlyHidden = categoriesContainer.style.display === 'none';
+        categoriesContainer.style.display = currentlyHidden ? 'block' : 'none';
+        localStorage.setItem(collapseKey, !currentlyHidden);
       });
 
       superCatDiv.appendChild(superHeader);
