@@ -20,13 +20,16 @@ h1 {
   padding-bottom: 1rem;
 }
 .super-category > h1 {
-  font-size: 1.3rem;
-  margin-bottom: 1rem;
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
   border-left: 5px solid #007bff;
   padding-left: 0.5rem;
   color: #007bff;
   user-select: none;
   cursor: pointer;
+}
+.categories-container {
+  margin-left: 1rem;
 }
 .category {
   margin-bottom: 1.5rem;
@@ -38,8 +41,15 @@ h1 {
   margin-bottom: 0.5rem;
 }
 .category > h2 {
+  font-size: 1.2rem;
+  margin: 1rem 0 0.5rem;
   cursor: default;
   user-select: none;
+}
+.items-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
 }
 .item.bg-light {
   background-color: #ffffff;
@@ -47,14 +57,29 @@ h1 {
 .item.bg-dark {
   background-color: #E7F7EE;
 }
+.bg-light {
+  background-color: #f9f9f9;
+}
+.bg-dark {
+  background-color: #f0f0f0;
+}
 .item {
   display: flex;
   flex-direction: column; /* 세로 방향 배치 */
   padding: 0.5rem;
   background: #fff;
   border-radius: 0.5rem;
-  margin: 0.3rem 0;
   box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+}
+.item > div {
+  display: flex;
+  align-items: center;
+}
+.item label {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 .item > label {
   display: flex;
@@ -63,23 +88,30 @@ h1 {
   min-height: 30px;
 }
 .item input[type="checkbox"] {
-  margin-right: 1rem;
+  margin-right: 0.5rem;
   margin-top: 3px; /* 위쪽 여백 추가 */
 }
 .item.checked label {
   text-decoration: line-through;
   color: gray;
 }
+.item button {
+  background: transparent;
+  border: none;
+  color: red;
+  cursor: pointer;
+  font-size: 0.7rem;
+  margin-left: 8px;
+}
 .sub-items {
   display: flex;
   flex-wrap: wrap;
   margin-left: 2rem;
-  margin-top: 0.3rem;
   gap: 0.3rem;
   justify-content: flex-end; /* 오른쪽 정렬 */
 }
 .sub-item {
-  background: #eee;
+  background-color: #f8f8f8;
   border-radius: 0.5rem;
   padding: 0.3rem 0.5rem;
   font-size: 0.9rem;
@@ -91,6 +123,7 @@ h1 {
 .sub-item label {
   display: flex;
   align-items: center;
+  gap: 0.3rem;
   flex: 1;      /* 공간을 최대한 차지하게 */
   height: 100%; /* sub-item 높이에 맞춤 */
 }
@@ -104,12 +137,16 @@ h1 {
 }
 .toggle-btn {
   padding: 0;
-  margin-left: 8px;
+  margin-left: 0.5rem;
   vertical-align: middle;
   align-self: flex-start; /* 버튼을 상위 라벨 왼쪽에 붙이기 용도 (선택 사항) */
   background: transparent;
   border: none;
   cursor: pointer;
+}
+.toggle-btn img {
+  width: 16px;
+  height: 16px;
 }
 .restore-button {
   display: block;
@@ -126,4 +163,43 @@ h1 {
 }
 .restore-button:hover {
   background-color: #45a049;
+}
+.auth-area {
+  display: flex;
+  align-items: center;       /* 세로 가운데 정렬 */
+  gap: 8px;                  /* 간격 약간 줄임 */
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  justify-content: flex-end; /* 오른쪽 정렬 */
+  width: 100%;               /* 부모 영역 전체 너비 차지 */
+  box-sizing: border-box;    /* 패딩/보더 포함 너비 계산 */
+  padding-right: 10px;       /* 오른쪽 여백 약간 */
+  height: 20px;             /* 원하는 낮은 높이 */
+  line-height: 20px;        /* 텍스트 수직 중앙 맞춤 */
+}
+.auth-area button {
+  padding: 4px 10px;         /* 버튼 크기 작게 */
+  border: none;
+  border-radius: 4px;
+  height: 100%;
+  line-height: 100%;
+  font-weight: 400;
+  font-size: 12px;           /* 폰트 크기 작게 */
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+/* 로그인 버튼 스타일 */
+#loginBtn {
+  background-color: #4285F4;
+  color: white;
+}
+#loginBtn:hover {
+  background-color: #357ae8;
+}
+/* 로그아웃 버튼 스타일 */
+#logoutBtn {
+  background-color: #f44336;
+  color: white;
+}
+#logoutBtn:hover {
+  background-color: #d32f2f;
 }

@@ -8,11 +8,18 @@
   <link rel="manifest" href="manifest.json" />
   <link rel="icon" href="icons/favicon.ico" type="image/x-icon" />
   <script defer src="script.js"></script>
-  <script defer src="main.js"></script>
+  <script defer type="module" src="main.js"></script>
 </head>
 <body>
   <div class="container">
     <h1>✅ 모비노기 체크리스트</h1>
+
+    <!-- 로그인 관련 UI 추가 -->
+    <div class="auth-area">
+      <button id="loginBtn">Google 로그인</button>
+      <button id="logoutBtn" style="display: none;">로그아웃</button>
+    </div>
+
     <div id="checklist"></div>
   </div>
 </body>
