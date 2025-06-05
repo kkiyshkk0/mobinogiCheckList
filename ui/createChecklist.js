@@ -1,5 +1,5 @@
 // createChecklist.js
-import { getValue, setValue } from '../utils/storageUtil.js';
+import { loadData, saveData } from '../utils/dataHandler.js';
 
 // 체크리스트를 생성하는 함수
 export function createChecklist(container, data) {
@@ -17,16 +17,18 @@ export function createChecklist(container, data) {
     const categoriesContainer = document.createElement('div');
     categoriesContainer.className = 'categories-container';
 
-    // 로컬스토리지에서 이 상위 카테고리의 접힘 상태를 확인
+    // 스토리지를 통해 이 상위 카테고리의 접힘 상태를 확인
     const collapseKey = `collapseState:${superCat.superCategory}`;
-    const isCollapsed = getValue(collapseKey) === 'true';
-    categoriesContainer.style.display = isCollapsed ? 'none' : 'block';
+    loadData(collapseKey).then(value => {
+      const isCollapsed = value === 'true';
+      categoriesContainer.style.display = isCollapsed ? 'none' : 'block';
+    });
 
     // 상위 카테고리 제목 클릭 시 접기/펼치기 기능
-    superHeader.addEventListener('click', () => {
+    superHeader.addEventListener('click', async () => {
       const currentlyHidden = categoriesContainer.style.display === 'none';
       categoriesContainer.style.display = currentlyHidden ? 'block' : 'none';
-      setValue(collapseKey, !currentlyHidden);
+      await saveData(collapseKey, !currentlyHidden);
     });
 
     superCatDiv.appendChild(superHeader);
@@ -60,9 +62,11 @@ export function createChecklist(container, data) {
         const hideKey = `hide:${superCat.superCategory}:${category.category}:${item.label}`;
 
         // 숨김 처리된 항목은 보이지 않게 함
-        if (getValue(hideKey) === 'true') {
-          itemDiv.style.display = 'none';
-        }
+        loadData(hideKey).then(hidden => {
+          if (hidden === 'true') {
+            itemDiv.style.display = 'none';
+          }
+        });
 
         // 항목 숨기기 버튼 (X)
         const hideBtn = document.createElement('button');
@@ -70,19 +74,20 @@ export function createChecklist(container, data) {
         hideBtn.className = 'hide-btn';
         hideBtn.title = '숨기기';
 
-        hideBtn.addEventListener('click', () => {
+        hideBtn.addEventListener('click', async () => {
           itemDiv.style.display = 'none';
-          setValue(hideKey, 'true');
+          await saveData(hideKey, 'true');
         });
 
         topRow.appendChild(hideBtn);
 
         // 기존 저장 상태 반영
-        const saved = getValue(itemKey);
-        if (saved === 'true') {
-          checkbox.checked = true;
-          itemDiv.classList.add('checked');
-        }
+        loadData(itemKey).then(saved => {
+          if (saved === 'true') {
+            checkbox.checked = true;
+            itemDiv.classList.add('checked');
+          }
+        });
 
         label.appendChild(checkbox);
         label.append(item.label);
@@ -117,46 +122,44 @@ export function createChecklist(container, data) {
             subCheckbox.type = 'checkbox';
 
             const subKey = `${itemKey}:${sub}`;
-            const subSaved = getValue(subKey);
-
-            if (subSaved === 'true') {
-              subCheckbox.checked = true;
-              subDiv.classList.add('checked');
-            }
+            loadData(subKey).then(subSaved => {
+              if (subSaved === 'true') {
+                subCheckbox.checked = true;
+                subDiv.classList.add('checked');
+              }
+            });
 
             subLabel.appendChild(subCheckbox);
             subLabel.append(sub);
             subDiv.appendChild(subLabel);
 
             // 서브 체크박스 클릭 시 상태 저장 및 스타일 갱신
-            subCheckbox.addEventListener('change', () => {
-              setValue(subKey, subCheckbox.checked);
-
-              if (subCheckbox.checked) subDiv.classList.add('checked');
-              else subDiv.classList.remove('checked');
+            subCheckbox.addEventListener('change', async () => {
+              await saveData(subKey, subCheckbox.checked);
+              subDiv.classList.toggle('checked', subCheckbox.checked);
 
               // 모든 서브 항목이 체크됐는지 확인 후 상위 체크박스 상태 반영
               const subCheckboxes = itemDiv.querySelectorAll('.sub-item input[type="checkbox"]');
               const allChecked = Array.from(subCheckboxes).every(cb => cb.checked);
               checkbox.checked = allChecked;
               itemDiv.classList.toggle('checked', allChecked);
-              setValue(itemKey, allChecked);
+              await saveData(itemKey, allChecked);
             });
 
             subList.appendChild(subDiv);
           });
 
           // 상위 항목 체크박스 클릭 시 모든 서브 항목 일괄 체크/해제
-          checkbox.addEventListener('change', () => {
-            setValue(itemKey, checkbox.checked);
+          checkbox.addEventListener('change', async () => {
             itemDiv.classList.toggle('checked', checkbox.checked);
+            await saveData(itemKey, checkbox.checked);
 
             const subCheckboxes = subList.querySelectorAll('input[type="checkbox"]');
             const subItems = subList.querySelectorAll('.sub-item');
-            subCheckboxes.forEach((subCheckbox, idx) => {
+            subCheckboxes.forEach(async (subCheckbox, idx) => {
               subCheckbox.checked = checkbox.checked;
-              setValue(`${itemKey}:${item.subItems[idx]}`, checkbox.checked);
               subItems[idx].classList.toggle('checked', checkbox.checked);
+              await saveData(`${itemKey}:${item.subItems[idx]}`, checkbox.checked);
             });
           });
 
@@ -174,9 +177,9 @@ export function createChecklist(container, data) {
           itemDiv.appendChild(subList);
         } else {
           // 서브 항목이 없는 경우 체크박스 단독 처리
-          checkbox.addEventListener('change', () => {
+          checkbox.addEventListener('change', async () => {
             itemDiv.classList.toggle('checked', checkbox.checked);
-            setValue(itemKey, checkbox.checked);
+            await saveData(itemKey, checkbox.checked);
           });
         }
 

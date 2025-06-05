@@ -164,3 +164,42 @@ h1 {
 .restore-button:hover {
   background-color: #45a049;
 }
+.auth-area {
+  display: flex;
+  align-items: center;       /* 세로 가운데 정렬 */
+  gap: 8px;                  /* 간격 약간 줄임 */
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  justify-content: flex-end; /* 오른쪽 정렬 */
+  width: 100%;               /* 부모 영역 전체 너비 차지 */
+  box-sizing: border-box;    /* 패딩/보더 포함 너비 계산 */
+  padding-right: 10px;       /* 오른쪽 여백 약간 */
+  height: 20px;             /* 원하는 낮은 높이 */
+  line-height: 20px;        /* 텍스트 수직 중앙 맞춤 */
+}
+.auth-area button {
+  padding: 4px 10px;         /* 버튼 크기 작게 */
+  border: none;
+  border-radius: 4px;
+  height: 100%;
+  line-height: 100%;
+  font-weight: 400;
+  font-size: 12px;           /* 폰트 크기 작게 */
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+/* 로그인 버튼 스타일 */
+#loginBtn {
+  background-color: #4285F4;
+  color: white;
+}
+#loginBtn:hover {
+  background-color: #357ae8;
+}
+/* 로그아웃 버튼 스타일 */
+#logoutBtn {
+  background-color: #f44336;
+  color: white;
+}
+#logoutBtn:hover {
+  background-color: #d32f2f;
+}
