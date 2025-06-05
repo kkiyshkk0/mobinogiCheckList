@@ -1,4 +1,4 @@
-import { setBoolean } from '../utils/localStorageUtil.js';
+import { setBoolean } from '../utils/storageUtil.js';
 
 export function clearChecklistByCategory(data, categoryName) {
   data.forEach(superCat => {

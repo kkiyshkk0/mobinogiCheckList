@@ -1,5 +1,5 @@
 import { clearChecklistByCategory } from '../reset/clearChecklist.js';
-import { removeKeysWithPrefix } from '../utils/localStorageUtil.js';
+import { removeKeysWithPrefix } from '../utils/storageUtil.js';
 
 export function createButtons(container, data) {
   const dailyBtn = document.createElement('button');
