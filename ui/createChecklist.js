@@ -20,7 +20,7 @@ export function createChecklist(container, data) {
     // 스토리지를 통해 이 상위 카테고리의 접힘 상태를 확인
     const collapseKey = `collapseState:${superCat.superCategory}`;
     loadData(collapseKey).then(value => {
-      const isCollapsed = value === 'true';
+      const isCollapsed = value === true;
       categoriesContainer.style.display = isCollapsed ? 'none' : 'block';
     });
 
@@ -63,7 +63,7 @@ export function createChecklist(container, data) {
 
         // 숨김 처리된 항목은 보이지 않게 함
         loadData(hideKey).then(hidden => {
-          if (hidden === 'true') {
+          if (hidden === true) {
             itemDiv.style.display = 'none';
           }
         });
@@ -76,14 +76,14 @@ export function createChecklist(container, data) {
 
         hideBtn.addEventListener('click', async () => {
           itemDiv.style.display = 'none';
-          await saveData(hideKey, 'true');
+          await saveData(hideKey, true);
         });
 
         topRow.appendChild(hideBtn);
 
         // 기존 저장 상태 반영
         loadData(itemKey).then(saved => {
-          if (saved === 'true') {
+          if (saved === true) {
             checkbox.checked = true;
             itemDiv.classList.add('checked');
           }
@@ -123,7 +123,7 @@ export function createChecklist(container, data) {
 
             const subKey = `${itemKey}:${sub}`;
             loadData(subKey).then(subSaved => {
-              if (subSaved === 'true') {
+              if (subSaved === true) {
                 subCheckbox.checked = true;
                 subDiv.classList.add('checked');
               }

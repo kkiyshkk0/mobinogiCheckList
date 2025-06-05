@@ -1,6 +1,7 @@
 // createButtons.js
 import { clearChecklistByCategory } from '../reset/clearChecklist.js';
 import { saveData } from '../utils/dataHandler.js';
+import { renderChecklist } from './renderChecklist.js'
 
 export function createButtons(container, data) {
   // 일일 초기화 버튼
@@ -13,10 +14,10 @@ export function createButtons(container, data) {
     // 체크 상태 초기화
     for (const item of data) {
       if (item.category === '일일 체크리스트') {
-        await saveData(item.id, 'false'); // 체크 해제
+        await saveData(item.id, false); // 체크 해제
       }
     }
-    location.reload();
+    renderChecklist(container, data);
   };
 
   // 주간 초기화 버튼
@@ -28,10 +29,10 @@ export function createButtons(container, data) {
 
     for (const item of data) {
       if (item.category === '주간 체크리스트') {
-        await saveData(item.id, 'false'); // 체크 해제
+        await saveData(item.id, false); // 체크 해제
       }
     }
-    location.reload();
+    renderChecklist(container, data);
   };
 
   // 숨긴 항목 복원 버튼
@@ -41,7 +42,7 @@ export function createButtons(container, data) {
   restoreBtn.onclick = async () => {
     for (const item of data) {
       const hideKey = `hide:${item.id}`;
-      await saveData(hideKey, 'false'); // 숨김 상태 해제
+      await saveData(hideKey, false); // 숨김 상태 해제
     }
 
     // UI 상에서 display 복원
