@@ -69,7 +69,6 @@ h1 {
   padding: 0.5rem;
   background: #fff;
   border-radius: 0.5rem;
-  margin: 0.3rem 0;
   box-shadow: 0 1px 2px rgba(0,0,0,0.05);
 }
 .item > div {
@@ -89,7 +88,7 @@ h1 {
   min-height: 30px;
 }
 .item input[type="checkbox"] {
-  margin-right: 1rem;
+  margin-right: 0.5rem;
   margin-top: 3px; /* 위쪽 여백 추가 */
 }
 .item.checked label {
@@ -101,14 +100,13 @@ h1 {
   border: none;
   color: red;
   cursor: pointer;
-  font-size: 1rem;
+  font-size: 0.7rem;
   margin-left: 8px;
 }
 .sub-items {
   display: flex;
   flex-wrap: wrap;
   margin-left: 2rem;
-  margin-top: 0.3rem;
   gap: 0.3rem;
   justify-content: flex-end; /* 오른쪽 정렬 */
 }
