@@ -1,5 +1,5 @@
 // createButtons.js
-import { clearChecklistByCategory } from '../reset/clearChecklist.js';
+import { clearChecklistByCategory, clearChecklistByHide } from '../reset/clearChecklist.js';
 import { saveData } from '../utils/dataHandler.js';
 import { renderChecklist } from './renderChecklist.js'
 
@@ -10,13 +10,6 @@ export function createButtons(container, data) {
   dailyBtn.className = 'restore-button';
   dailyBtn.onclick = async () => {
     clearChecklistByCategory(data, '일일 체크리스트');
-
-    // 체크 상태 초기화
-    for (const item of data) {
-      if (item.category === '일일 체크리스트') {
-        await saveData(item.id, false); // 체크 해제
-      }
-    }
     renderChecklist(container, data);
   };
 
@@ -26,12 +19,6 @@ export function createButtons(container, data) {
   weeklyBtn.className = 'restore-button';
   weeklyBtn.onclick = async () => {
     clearChecklistByCategory(data, '주간 체크리스트');
-
-    for (const item of data) {
-      if (item.category === '주간 체크리스트') {
-        await saveData(item.id, false); // 체크 해제
-      }
-    }
     renderChecklist(container, data);
   };
 
@@ -40,10 +27,7 @@ export function createButtons(container, data) {
   restoreBtn.textContent = '숨긴 항목 복원';
   restoreBtn.className = 'restore-button';
   restoreBtn.onclick = async () => {
-    for (const item of data) {
-      const hideKey = `hide:${item.id}`;
-      await saveData(hideKey, false); // 숨김 상태 해제
-    }
+    clearChecklistByHide(data);
 
     // UI 상에서 display 복원
     document.querySelectorAll('.item').forEach(item => {

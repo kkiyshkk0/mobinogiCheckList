@@ -16,3 +16,17 @@ export function clearChecklistByCategory(data, categoryName) {
     });
   });
 }
+
+export function clearChecklistByHide(data) {
+  data.forEach(superCat => {
+    superCat.categories.forEach(category => {
+        category.items.forEach(item => {
+          const baseKey = `hide:${superCat.superCategory}:${category.category}:${item.label}`;
+          saveData(baseKey, false);
+          if (item.subItems) {
+            item.subItems.forEach(sub => saveData(`${baseKey}:${sub}`, false));
+          }
+        });
+    });
+  });
+}
